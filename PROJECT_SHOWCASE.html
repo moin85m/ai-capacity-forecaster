@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Capacity Forecaster — Technical Case Study</title>
+<style>
+  @page {
+    size: letter;
+    margin: 18mm 16mm 18mm 16mm;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    line-height: 1.55;
+    font-size: 10.5pt;
+    background: #ffffff;
+    margin: 0;
+    padding: 0;
+  }
+  .header {
+    border-bottom: 2px solid #0284c7;
+    padding-bottom: 12px;
+    margin-bottom: 18px;
+  }
+  .header h1 {
+    font-size: 20pt;
+    margin: 0 0 6px 0;
+    color: #0f172a;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .header .tagline {
+    font-size: 11pt;
+    color: #475569;
+    font-weight: 500;
+  }
+  .meta-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 9pt;
+    color: #64748b;
+  }
+  .meta-bar a {
+    color: #0284c7;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  h2 {
+    font-size: 13pt;
+    color: #0f172a;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 4px;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  h3 {
+    font-size: 11pt;
+    color: #0369a1;
+    margin-top: 14px;
+    margin-bottom: 4px;
+    font-weight: 700;
+  }
+  p {
+    margin: 0 0 8px 0;
+  }
+  ul {
+    margin: 0 0 10px 0;
+    padding-left: 20px;
+  }
+  li {
+    margin-bottom: 4px;
+  }
+  .badge {
+    display: inline-block;
+    padding: 2px 7px;
+    font-size: 7.5pt;
+    font-weight: 700;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .badge-p1 { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+  .badge-tech { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+  
+  .card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    break-inside: avoid;
+  }
+  .card-title {
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 10.5pt;
+    margin-bottom: 4px;
+  }
+  
+  /* Architecture Diagram Box */
+  .diagram-container {
+    background: #0f172a;
+    color: #f8fafc;
+    border-radius: 8px;
+    padding: 14px;
+    margin: 12px 0;
+    break-inside: avoid;
+  }
+  .diagram-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .diagram-step {
+    flex: 1;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 10px 8px;
+    text-align: center;
+  }
+  .diagram-step .step-num {
+    font-size: 7pt;
+    color: #38bdf8;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .diagram-step .step-title {
+    font-size: 9pt;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 4px 0 2px 0;
+  }
+  .diagram-step .step-desc {
+    font-size: 7.5pt;
+    color: #94a3b8;
+    line-height: 1.25;
+  }
+  .diagram-arrow {
+    color: #38bdf8;
+    font-size: 14pt;
+    font-weight: bold;
+  }
+
+  /* Table styling */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 9pt;
+    break-inside: avoid;
+  }
+  th {
+    background: #f1f5f9;
+    color: #334155;
+    text-align: left;
+    padding: 7px 10px;
+    font-weight: 700;
+    border: 1px solid #cbd5e1;
+  }
+  td {
+    padding: 6px 10px;
+    border: 1px solid #e2e8f0;
+    color: #334155;
+  }
+  tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+
+  /* Code block */
+  pre {
+    background: #0f172a;
+    color: #38bdf8;
+    padding: 9px 12px;
+    border-radius: 6px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 8pt;
+    margin: 6px 0 10px 0;
+    overflow-x: auto;
+    break-inside: avoid;
+  }
+  code {
+    font-family: Consolas, monospace;
+    font-size: 8.5pt;
+    background: #f1f5f9;
+    color: #0f172a;
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+  pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+  }
+
+  .avoid-break {
+    break-inside: avoid;
+  }
+  .page-break {
+    page-break-after: always;
+  }
+</style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>AI Capacity Forecaster</h1>
+    <div class="tagline">Proactive Infrastructure Capacity Planning & Automated SRE Operations Cockpit</div>
+    <div class="meta-bar">
+      <span><strong>Author:</strong> Moin Hasan</span>
+      <span><strong>Repository:</strong> <a href="https://github.com/moin85m/ai-capacity-forecaster">github.com/moin85m/ai-capacity-forecaster</a></span>
+      <span><strong>Tech:</strong> Python 3.12 • Streamlit • Plotly • Gemini API</span>
+    </div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <h2>1. Problem Statement & Executive Summary</h2>
+  <p>
+    Modern cloud-native and Kubernetes clusters frequently face <strong>reactive incident management</strong>. 
+    Traditional monitoring tools (Prometheus, Datadog, CloudWatch) alert on-call engineers <em>after</em> thresholds (CPU &gt; 90%, Memory &gt; 85%) are already breached, resulting in latency spikes, OOM-killed container restarts, and customer-facing degradation.
+  </p>
+  <p>
+    <strong>AI Capacity Forecaster</strong> solves this by shifting operations from reactive alerts to <strong>deterministic trend extrapolation and proactive remediation</strong>, calculating exact time-to-saturation hours ahead of impact.
+  </p>
+
+  <!-- ARCHITECTURE DIAGRAM -->
+  <h2>2. System Architecture & Telemetry Pipeline</h2>
+  <div class="diagram-container">
+    <div class="diagram-grid">
+      <div class="diagram-step">
+        <div class="step-num">Step 1</div>
+        <div class="step-title">Telemetry Ingestion</div>
+        <div class="step-desc">48h hourly time-series (CPU, RAM, Bandwidth, RPS, Pods)</div>
+      </div>
+      <div class="diagram-arrow">➔</div>
+      <div class="diagram-step">
+        <div class="step-num">Step 2</div>
+        <div class="step-title">Trend Forecaster</div>
+        <div class="step-desc">Least-squares slope (%/h) & R² confidence evaluation</div>
+      </div>
+      <div class="diagram-arrow">➔</div>
+      <div class="diagram-step">
+        <div class="step-num">Step 3</div>
+        <div class="step-title">Risk Engine</div>
+        <div class="step-desc">4-tier categorization: LOW, MEDIUM, HIGH, CRITICAL</div>
+      </div>
+      <div class="diagram-arrow">➔</div>
+      <div class="diagram-step">
+        <div class="step-num">Step 4</div>
+        <div class="step-title">Dual-Mode Advisor</div>
+        <div class="step-desc">Mode A: Offline Heuristics<br/>Mode B: GenAI Synthesis</div>
+      </div>
+      <div class="diagram-arrow">➔</div>
+      <div class="diagram-step">
+        <div class="step-num">Step 5</div>
+        <div class="step-title">SRE Cockpit</div>
+        <div class="step-desc">Interactive Plotly UI & copyable CLI runbooks</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: ADRS -->
+  <h2>3. Architectural Decision Records (ADRs) & Engineering Trade-Offs</h2>
+  
+  <div class="card avoid-break">
+    <div class="card-title">ADR-01: Explainable Linear Extrapolation vs. Deep Learning (LSTM / Transformers)</div>
+    <p><strong>Context:</strong> Production reliability tools frequently explore complex deep time-series models (Prophet, LSTMs, Temporal Fusion Transformers).</p>
+    <p><strong>Decision:</strong> Implemented least-squares linear trend regression with configurable lookback windows ($W \in [4, 24]$ hrs) and $R^2$ goodness-of-fit scoring.</p>
+    <p><strong>Engineering Rationale:</strong></p>
+    <ul>
+      <li><strong>Explainability & Trust:</strong> In high-stress production incidents, on-call SREs require transparent mathematical causality. The calculation <code>ETA = (90% - Current) / Slope</code> is intuitive, auditable, and easily verifiable in real time.</li>
+      <li><strong>Sub-Millisecond Execution:</strong> Executes in-memory without requiring dedicated GPU infrastructure, model artifact weights, or heavy background training pipelines.</li>
+      <li><strong>Short-Horizon Stability:</strong> For 4–12 hour operational horizons, linear slopes prevent the overfitting and false seasonality traps that deep learning models introduce on noisy telemetry.</li>
+    </ul>
+  </div>
+
+  <div class="card avoid-break">
+    <div class="card-title">ADR-02: Zero-Dependency Dual-Mode Reliability Pattern</div>
+    <p><strong>Context:</strong> Mission-critical infrastructure tools must never introduce external single points of failure (SPOFs).</p>
+    <p><strong>Decision:</strong> Architected the platform around two distinct execution engines:</p>
+    <ul>
+      <li><strong>Mode A (Deterministic Engine):</strong> 100% offline rule-based heuristics requiring zero API keys, internet connectivity, or credentials.</li>
+      <li><strong>Mode B (AI-Assisted LLM Mode):</strong> Optional integration with Google Gemini or OpenAI to synthesize incident narratives and long-term architectural advice when credentials are present.</li>
+    </ul>
+    <p><strong>Engineering Rationale:</strong> Guarantees that during air-gapped operations, network partitions, or external API rate-limiting, the capacity forecaster continues operating with zero degradation.</p>
+  </div>
+
+  <div class="card avoid-break">
+    <div class="card-title">ADR-03: Strict Separation of Observed Telemetry vs. AI Recommendations</div>
+    <p><strong>Decision:</strong> Distinct visual badges strictly segregate <code>[Observed Telemetry]</code> (unmodified sensor data), <code>[Deterministic Engine Logic]</code> (mathematical regression slopes), and <code>[AI Operations Advisor]</code> (generative narratives).</p>
+    <p><strong>Engineering Rationale:</strong> Complies with enterprise SRE observability standards and completely prevents alert confusion or hallucinated metric interpretations.</p>
+  </div>
+
+  <!-- SECTION 4: SCENARIO PROFILES & RUNBOOKS -->
+  <div class="avoid-break">
+    <h2>4. Multi-Metric Correlation & Scenario Simulation</h2>
+    <p>The platform models multi-vector infrastructure stresses across Compute (CPU %), Memory (RAM %), Network (Bandwidth %), and Ingress Request Rate vs. Pod Replicas. It includes 4 simulation profiles:</p>
+    <ul>
+      <li><strong>Steady Workload Growth:</strong> Simulates multi-day scaling toward capacity saturation.</li>
+      <li><strong>Monotonic Memory Leak:</strong> Constant request volume with continuous uncollected heap consumption leading to predicted OOM-kills.</li>
+      <li><strong>Sudden Traffic Spike:</strong> Exponential traffic influx outpacing autoscaling replica provisioning.</li>
+      <li><strong>Stable Operations:</strong> Confirms healthy baseline operating headroom (&gt;40% buffer).</li>
+    </ul>
+  </div>
+
+  <!-- SECTION 5: AUTOMATED RUNBOOKS -->
+  <div class="avoid-break">
+    <h2>5. Actionable SRE Runbooks & Remediation Outputs</h2>
+    <p>When risks escalate to <code>HIGH</code> or <code>CRITICAL</code>, the system automatically generates executable CLI commands:</p>
+    <pre><code># 1. Trigger Kubernetes Horizontal Scale-Out:
+kubectl scale deployment/api-gateway --replicas=6
+
+# 2. Adjust Horizontal Pod Autoscaler targets proactively:
+kubectl patch hpa api-gateway -p '{"spec":{"targetCPUUtilizationPercentage":70}}'
+
+# 3. Check for Out-Of-Memory (OOM-Killed) pod terminations:
+kubectl get events --field-selector reason=OOMKilled -A
+
+# 4. Enforce Ingress Token-Bucket Rate Limiting to protect network interfaces:
+kubectl annotate ingress api-ingress nginx.ingress.kubernetes.io/limit-rps='150' --overwrite</code></pre>
+  </div>
+
+  <!-- SECTION 6: TECH STACK -->
+  <div class="avoid-break">
+    <h2>6. Technology Stack & Implementation Summary</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Technology</th>
+          <th>Implementation Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Languages & Runtimes</strong></td>
+          <td>Python 3.12 / 3.11</td>
+          <td>Vectorized analytics, least-squares algebra, and backend runtime</td>
+        </tr>
+        <tr>
+          <td><strong>Dashboard Framework</strong></td>
+          <td>Streamlit</td>
+          <td>Reactive SRE operations center with custom dark UI styling</td>
+        </tr>
+        <tr>
+          <td><strong>Data Visualization</strong></td>
+          <td>Plotly Graph Objects</td>
+          <td>Interactive multi-axis time series, projection bands, and threshold lines</td>
+        </tr>
+        <tr>
+          <td><strong>AI Integration</strong></td>
+          <td>Google Gemini 1.5 Flash / OpenAI GPT-4o-mini</td>
+          <td>Incident narrative synthesis and architectural recommendations</td>
+        </tr>
+        <tr>
+          <td><strong>Operations & Cloud</strong></td>
+          <td>Kubernetes HPA, AWS ASG</td>
+          <td>Remediation runbooks and capacity headroom management</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SECTION 7: VERIFICATION -->
+  <div class="avoid-break">
+    <h2>7. Quality Assurance & Automated Testing</h2>
+    <p>Automated test suite (<code>tests/test_pipeline.py</code>) validates schema compliance, least-squares slope accuracy, and risk boundary conditions with 100% pass rate:</p>
+    <pre><code>$ python3 tests/test_pipeline.py
+Testing data loading... Loaded 48 telemetry rows.
+Testing forecasting engine...
+  [cpu_percent] Current: 92.1%, Slope: +0.78%/h, Critical ETA: Threshold already exceeded
+  [memory_percent] Current: 87.4%, Slope: +0.65%/h, Critical ETA: ~3h 58m
+  [network_percent] Current: 83.0%, Slope: +0.83%/h, Critical ETA: ~8h 28m
+Testing risk classification... Overall System Risk: CRITICAL (Dominant: CPU Utilization)
+ALL SMOKE TESTS PASSED SUCCESSFULLY! ✅</code></pre>
+  </div>
+
+</body>
+</html>
