@@ -32,7 +32,8 @@ ai-capacity-forecaster/
 ├── app.py                      # Streamlit Operations Dashboard UI
 ├── requirements.txt            # Python dependencies
 ├── README.md                   # Technical documentation
-├── RESUME_PROJECT_SUMMARY.md   # Resume & portfolio showcase document
+├── PROJECT_SHOWCASE.md         # System design case study & architecture decisions
+├── MY_INTERVIEW_PREP.md        # Personal interview prep & resume notes
 ├── .gitignore                  # Git ignore rules
 │
 ├── data/
