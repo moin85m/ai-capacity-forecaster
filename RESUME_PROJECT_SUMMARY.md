@@ -38,38 +38,42 @@ Choose the variant that best matches your target role:
 ```mermaid
 flowchart TD
     subgraph Ingestion["1. Telemetry Ingestion"]
-        A[Time-Series Infrastructure Telemetry\nCPU %, Memory %, Network %, RPS, Replicas]
+        A["Time-Series Telemetry Ingestion<br/>(CPU %, Memory %, Network %, RPS, Pods)"]
     end
 
     subgraph Analytics["2. Trend & Forecasting Engine"]
-        B[Least-Squares Linear Regression\nSlope Calculation %/hr]
-        C[Time-to-Threshold Calculator\nWarning: 75% | Critical: 90%]
-        D[Confidence Metric\nR-Squared Evaluation]
+        B["Least-Squares Linear Regression<br/>Slope Extrapolation (%/hr)"]
+        C["Time-to-Threshold Calculator<br/>Warning: 75% / Critical: 90%"]
+        D["Confidence Metric<br/>R-Squared Goodness of Fit"]
     end
 
     subgraph Risk["3. Risk Classification"]
-        E{Risk Classification Engine}
-        E -->|Safe buffer| R1[LOW Risk]
-        E -->|Upward trend, >60%| R2[MEDIUM Risk]
-        E -->|Breach in <2.5h| R3[HIGH Risk]
-        E -->|Breach in <1.0h or Saturation| R4[CRITICAL Risk]
+        E{"Risk Classification Engine"}
+        E -->|Safe headroom| R1["LOW Risk"]
+        E -->|Upward trend >60%| R2["MEDIUM Risk"]
+        E -->|Breach in <2.5h| R3["HIGH Risk"]
+        E -->|Breach in <1.0h or Saturation| R4["CRITICAL Risk"]
     end
 
     subgraph Recommendation["4. Dual-Mode Operations Advisor"]
-        F1[Mode A: Deterministic SRE Runbook Engine\nLocal Heuristics, No API Key]
-        F2[Mode B: GenAI LLM Operations Advisor\nGemini 1.5 Flash / GPT-4o-mini]
+        F1["Mode A: Deterministic SRE Runbook Engine<br/>Local Heuristics (No API Key)"]
+        F2["Mode B: GenAI LLM Operations Advisor<br/>Gemini 1.5 Flash / GPT-4o-mini"]
     end
 
     subgraph UI["5. SRE Operations Cockpit (Streamlit)"]
-        G[Interactive Multi-Metric Projections]
-        H[Executable Runbooks: kubectl / AWS CLI]
-        I[Distinct Badges: Observed Telemetry vs AI Inferences]
+        G["Interactive Multi-Metric Projections"]
+        H["Executable Runbooks: kubectl / AWS CLI"]
+        I["Distinct Badges: Observed vs Inferred"]
     end
 
-    A --> B --> C & D
+    A --> B
+    B --> C
+    B --> D
     C --> E
-    E --> F1 & F2
-    F1 & F2 --> UI
+    E --> F1
+    E --> F2
+    F1 --> UI
+    F2 --> UI
 ```
 
 ---
